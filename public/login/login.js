@@ -19,6 +19,7 @@ function onSubmit(e) {
       if(res.data.login==='Login succesful'){
         alert("Login succesful");
         localStorage.setItem('token',res.data.token);
+        window.location.href='./expense.html';
       }
     }).catch((err)=>{
      console.log(err);

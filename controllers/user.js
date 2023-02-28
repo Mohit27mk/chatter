@@ -39,3 +39,37 @@ exports.postAddUser=async(req,res,next)=>{
         res.status(400).json({message:"Something went wrong",err});
     }
 }
+
+function generateAccessToken(id,name){
+    return jwt.sign({userId:id,name:name},process.env.JWT_SECRET_KEY);
+}
+
+exports.postLoginUser=async(req,res,next)=>{
+    try{
+        const email=req.body.email;
+        const password=req.body.password;
+        
+        if(isstringinvalid(email)||isstringinvalid(password)){
+            res.status(400).json({message:"Something is missing"});
+           }
+
+        const emailExists = await User.findOne({ where: { email: email } });
+        if (emailExists) {
+            bcrypt.compare(password,emailExists.dataValues.password,(err,result)=>{
+                if(err){
+                    throw new Error("User not authorized");
+                }
+                if(result===true){
+                    res.status(201).json({login:"Login succesful",token:generateAccessToken(emailExists.id,emailExists.name)});   
+                }else{
+                    res.status(401).json({message:"password is incorrect"});
+                }
+            })
+        }else{
+            res.status(404).json({login:"User not found)"}); 
+        }
+      
+     }catch(err){
+             res.status(500).json({message:err});
+         }
+};
