@@ -1,6 +1,6 @@
 const User=require('../models/user');
 const bcrypt=require('bcrypt');
-
+const jwt=require('jsonwebtoken');
 
 function isstringinvalid(string){
     if(string==undefined||string.length==0){

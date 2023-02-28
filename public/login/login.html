@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignUp</title>
-    <link rel="stylesheet" href="./signup.css">
+    <title>Login</title>
+    <link rel="stylesheet" href="./login.css">
 </head>
 <body>
     <div class="main">
@@ -13,20 +13,12 @@
         <img  src="./chat.jpg" alt="Logo">
     </div>
     <div class="sign">
-        <h1>SignUp</h1>
+        <h1>Login</h1>
     </div>
-    <form id="signup-form">
-        <div class="nam">
-            <label for="name" id="lab">Name:</label>
-            <input class="form-input"  type="text" id="name" name="name" required>
-        </div>
+    <form id="login-form">
         <div class="nam">
             <label for="email" id="lab">Email:</label>
             <input type="email" id="email" name="email" required>
-        </div>
-        <div class="nam">
-            <label for="phoneno" id="lab">Phoneno:</label>
-            <input class="form-input"  type="text" id="phoneno" name="phoneno" required>
         </div>
         <div class="nam">
             <label for="password" id="lab">Password:</label>
@@ -37,10 +29,11 @@
         </div>
     </form>
     <div class="exis">
-        <p>Existing User:<a href="../login/login.html">Login</a></p>
+        <p>Don't have account:<a href="../signup/signup.html">SignUp</a></p>
+        <a href="./forgetpassword.html"><h4>Forgotten your password?</h4></a>
     </div>
     </div>
-    <script src="signup.js"></script>
+    <script src="login.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 
 </body>
