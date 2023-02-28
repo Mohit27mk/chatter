@@ -20,11 +20,15 @@ function onSubmit(e) {
     
     axios.post("http://localhost:3000/user/signup",myobj)
     .then((res)=>{
+      
       if(res.data.Email==='exist'){
         alert("Email already exist");
       }
       if(res.data.Phoneno==='exist'){
         alert("Phoneno already exist");
+      }
+      if(res.data.success==true){
+        alert("Signup successfully");
       }
         window.location.href='./login.html';
       
