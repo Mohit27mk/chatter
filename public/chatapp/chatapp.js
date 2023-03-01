@@ -45,19 +45,26 @@ window.addEventListener('DOMContentLoaded',async()=>{
     }
 })
 
-window.addEventListener('DOMContentLoaded',async()=>{
-    try{
+
+    
+       setInterval(async()=>{
+        try{
+            const chats = document.querySelector('#chats');
         const token=localStorage.getItem('token');
         const res=await axios.get("http://localhost:3000/message/get-messages",{ headers: {"Authorization":token} });
-        console.log(res);
+        // console.log(res);
+      chats.innerHTML='';
         for(let i=0;i<res.data.messages.length;i++){
             showMessage(res.data.messages[i]);
-        }  
-    }catch(err){
+        }
+    } 
+    catch(err){
         console.log(err);
     }
+       },1000) 
+    
 
-})
+
 
 function showMessage(obj){
     const chats = document.querySelector('#chats');
