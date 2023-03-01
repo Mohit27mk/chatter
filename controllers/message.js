@@ -5,7 +5,8 @@ exports.postAddMessage=async(req,res,next)=>{
     try{
         const message=req.body.message;
         const userId=req.user.id;
-        const data=await Message.create({message:message,userId:userId});
+        const name=req.user.name;
+        const data=await Message.create({message:message,userId:userId,name:name});
         res.status(200).json({data});
     }catch(err){
 console.log(err);
@@ -14,8 +15,9 @@ console.log(err);
 }
 
 exports.getMessages=async(req,res,next)=>{
-    try{ 
-    const messages=await Message.findAll({include:User});
+    try{
+    const lastId=+(req.query.lastId);
+    const messages=await Message.findAll({offset: lastId});
     res.status(200).json({messages});
     }catch(err){ 
         console.log(err);
