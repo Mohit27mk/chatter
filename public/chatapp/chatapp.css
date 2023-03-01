@@ -34,3 +34,28 @@
     width: 70px;
     height: 30px;
 }
+
+ul {
+    list-style: none;
+  }
+.usersmain{
+ 
+}
+  #users{
+    background-color: blanchedalmond;
+   width: 500px;
+   margin-left: 500px;
+   text-align: center;
+  } 
+  
+ ul li {
+    padding: 5px;
+    background: #f4f4f4;
+    margin: 5px 0;
+  }
+  #chats{
+    background-color: rgb(177, 217, 226);
+    width: 500px;
+    margin-top: 30px;
+    margin-left: 500px;
+  }

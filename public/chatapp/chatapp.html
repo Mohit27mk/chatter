@@ -13,12 +13,20 @@
     <h1>ChatApp</h1>
    </div>
    </div>
-   <form action="" class="botto">
+   <form action="" id="myform" class="botto">
     <div class="inp" >
-        <input type="text" placeholder="Type a message">
+        <input type="text" id="message" placeholder="Type a message" name="message">
         <button type="submit">Send</button>
        </div>
    </form>
-    
+   <div class="usersmain">
+    <ul id="users">
+        <li>You joined</li>
+           </ul>
+           <ul id="chats"></ul>
+   </div>
+
+    <script src="./chatapp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 </body>
 </html>

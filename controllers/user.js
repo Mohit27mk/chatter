@@ -73,3 +73,14 @@ exports.postLoginUser=async(req,res,next)=>{
              res.status(500).json({message:err});
          }
 };
+
+exports.getUsers=async(req,res,next)=>{
+   try{
+    let users = await User.findAll();
+     users=users.filter((user)=>user.id!=req.user.id);
+    res.status(200).json({users});
+   }catch(err){
+    console.log(err);
+   }
+
+}
