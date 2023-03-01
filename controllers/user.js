@@ -60,7 +60,7 @@ exports.postLoginUser=async(req,res,next)=>{
                     throw new Error("User not authorized");
                 }
                 if(result===true){
-                    res.status(201).json({login:"Login succesful",token:generateAccessToken(emailExists.id,emailExists.name)});   
+                    res.status(201).json({login:"Login succesful",token:generateAccessToken(emailExists.id,emailExists.name),name:emailExists.name});   
                 }else{
                     res.status(401).json({message:"password is incorrect"});
                 }

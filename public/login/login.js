@@ -18,6 +18,8 @@ function onSubmit(e) {
     .then((res)=>{
       if(res.data.login==='Login succesful'){
         alert("Login succesful");
+        // console.log(res.data.name);
+        localStorage.setItem('name',res.data.name);
         localStorage.setItem('token',res.data.token);
         window.location.href='../chatapp/chatapp.html';
       }

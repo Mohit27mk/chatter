@@ -14,7 +14,7 @@ function onSubmit(e){
   
     const chats = document.querySelector('#chats');
     const li = document.createElement('li');
-    li.appendChild(document.createTextNode(message));
+    li.appendChild(document.createTextNode(`You:${message}`));
     chats.appendChild(li);
     
     const myobj={
@@ -35,7 +35,6 @@ function onSubmit(e){
 window.addEventListener('DOMContentLoaded',async()=>{
     try{
         const token=localStorage.getItem('token');
-        const userList = document.querySelector('#users');
         const res=await axios.get("http://localhost:3000/user/get-users",{ headers: {"Authorization":token} });
     // console.log(res.data.users[0].name);
     for(let i=0;i<res.data.users.length;i++){
@@ -45,6 +44,34 @@ window.addEventListener('DOMContentLoaded',async()=>{
         console.log(err);
     }
 })
+
+window.addEventListener('DOMContentLoaded',async()=>{
+    try{
+        const token=localStorage.getItem('token');
+        const res=await axios.get("http://localhost:3000/message/get-messages",{ headers: {"Authorization":token} });
+        console.log(res);
+        for(let i=0;i<res.data.messages.length;i++){
+            showMessage(res.data.messages[i]);
+        }  
+    }catch(err){
+        console.log(err);
+    }
+
+})
+
+function showMessage(obj){
+    const chats = document.querySelector('#chats');
+    const li = document.createElement('li');
+    const name=localStorage.getItem('name');
+    if(name==obj.user.name){
+        li.appendChild(document.createTextNode(`You: ${obj.message}`));
+        chats.appendChild(li);
+    }else{
+        li.appendChild(document.createTextNode(`${obj.user.name}: ${obj.message}`));
+        chats.appendChild(li);
+    }
+   
+}
 
 function showUsers(obj){
     const userList = document.querySelector('#users');

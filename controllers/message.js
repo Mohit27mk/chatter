@@ -1,4 +1,5 @@
 const Message=require('../models/message');
+const User=require('../models/user');
 
 exports.postAddMessage=async(req,res,next)=>{
     try{
@@ -10,4 +11,13 @@ exports.postAddMessage=async(req,res,next)=>{
 console.log(err);
     }
 
+}
+
+exports.getMessages=async(req,res,next)=>{
+    try{ 
+    const messages=await Message.findAll({include:User});
+    res.status(200).json({messages});
+    }catch(err){ 
+        console.log(err);
+    }
 }
