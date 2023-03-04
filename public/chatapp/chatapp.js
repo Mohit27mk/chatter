@@ -24,15 +24,12 @@ function onSubmit(e){
         message
     };
 
-    axios.post("http://localhost:3000/message/add-message",myobj,{ headers: {"Authorization":token} })
+    const groupId=localStorage.getItem('groupId');
+
+    axios.post(`http://localhost:3000/message/add-message/${groupId}`,myobj,{ headers: {"Authorization":token} })
     .then((res)=>{
-    //    console.log(res.data.data);
-    
-     
-    
-
+       console.log(res.data.data);
        
-
     }).catch((err)=>{
      console.log(err);
     })
@@ -45,35 +42,14 @@ window.addEventListener('DOMContentLoaded',async()=>{
         const token=localStorage.getItem('token');
         const chats = document.querySelector('#chats');
         
-        const res=await axios.get("http://localhost:3000/user/get-users",{ headers: {"Authorization":token} });
-    // console.log(res.data.users[0].name);
-    for(let i=0;i<res.data.users.length;i++){
-        showUsers(res.data.users[i]);
-    }    
-    let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
-    let lastId;
-    
-    if (localMsg.length == 0) {
-      
-      lastId = 0;
-    }
-    if (localMsg.length > 0) {
-      lastId = localMsg[localMsg.length - 1].id;
-    }
-   
-       
-    const response=await axios.get(`http://localhost:3000/message/get-messages?lastId=${lastId}`,{ headers: {"Authorization":token} });
-     let  retrivedMsg =localMsg.concat(response.data.messages);
-    //  console.log(retrivedMsg)
-     if (retrivedMsg.length > 100) {
-        for (let i = 0; i < retrivedMsg.length - 100; i++)
-          retrivedMsg.shift();
-      }
-      localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
-    //   console.log(retrivedMsg);
-           for(let i=0;i<retrivedMsg.length;i++){
-             showMessage(retrivedMsg[i]);
-        }
+        
+        // const res=await axios.get("http://localhost:3000/user/get-users",{ headers: {"Authorization":token} });
+        const res=await axios.get("http://localhost:3000/group/get-groups",{ headers: {"Authorization":token} });
+// console.log(res.data.userGroups[0].group.name)
+        // console.log(res.data.users[0].name);
+        for(let i=0;i<res.data.userGroups.length;i++){
+            showGroups(res.data.userGroups[i]);
+        }    
 }catch(err){
         console.log(err);
     }
@@ -83,11 +59,11 @@ window.addEventListener('DOMContentLoaded',async()=>{
     
        setInterval(async()=>{
         try{
+
             const chats = document.querySelector('#chats');
             const token=localStorage.getItem('token');
-  
+            const groupId=localStorage.getItem('groupId');
             
-
             let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
             let lastId;
             
@@ -96,11 +72,19 @@ window.addEventListener('DOMContentLoaded',async()=>{
               lastId = 0;
             }
             if (localMsg.length > 0) {
-              lastId = localMsg[localMsg.length - 1].id;
-            }
-           
+                for(let i=localMsg.length - 1;i>=0;i--){
+                    if(localMsg[i].groupId==groupId){
+                      lastId=localMsg[i].id;
+                      break;
+                    }
+                  }
+                
+              }
+              if(!lastId){
+                lastId=0;
+              }
        
-        const response=await axios.get(`http://localhost:3000/message/get-messages?lastId=${lastId}`,{ headers: {"Authorization":token} });
+        const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
         let  retrivedMsg =localMsg.concat(response.data.messages);
     //  console.log(retrivedMsg)
     if(response.data.messages.length!=0) 
@@ -115,7 +99,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
       localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
     //   console.log(retrivedMsg);
            for(let i=0;i<retrivedMsg.length;i++){
-             showMessage(retrivedMsg[i]);
+            if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
         }}
     } 
     catch(err){
@@ -125,6 +109,56 @@ window.addEventListener('DOMContentLoaded',async()=>{
     
 
 
+
+
+
+async function showGroups(obj){
+    const userList = document.querySelector('#groups');
+    const li = document.createElement('li');
+    li.appendChild(document.createTextNode(`${obj.group.name} `));
+    userList.appendChild(li);
+    li.onclick=async()=>{
+        localStorage.setItem('groupId',obj.group.id)
+        const chats = document.querySelector('#chats');
+        chats.innerHTML=obj.group.name;
+        
+        let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
+        let lastId;
+        
+        if (localMsg.length == 0) {
+          
+          lastId = 0;
+        }
+        if (localMsg.length > 0) {
+            for(let i=localMsg.length - 1;i>=0;i--){
+              if(localMsg[i].groupId==obj.group.id){
+                lastId=localMsg[i].id;
+                break;
+              }
+            }
+          
+        }
+        if(!lastId){
+          lastId=0;
+        }
+        const token=localStorage.getItem('token');
+        const groupId=localStorage.getItem('groupId');
+        console.log(lastId);    
+        const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
+         let  retrivedMsg =localMsg.concat(response.data.messages);
+         console.log(retrivedMsg)
+         if (retrivedMsg.length > 100) {
+            for (let i = 0; i < retrivedMsg.length - 100; i++)
+              retrivedMsg.shift();
+          }
+          localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
+        //   console.log(retrivedMsg);
+    
+               for(let i=0;i<retrivedMsg.length;i++){
+                 if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
+            }
+    }
+}
 
 function showMessage(obj){
     const chats = document.querySelector('#chats');
@@ -136,14 +170,5 @@ function showMessage(obj){
     }else{
         li.appendChild(document.createTextNode(`${obj.name}: ${obj.message}`));
         chats.appendChild(li);
-    }
-   
+    } 
 }
-
-function showUsers(obj){
-    const userList = document.querySelector('#users');
-    const li = document.createElement('li');
-    li.appendChild(document.createTextNode(`${obj.name} joined`));
-    userList.appendChild(li);
-}
-

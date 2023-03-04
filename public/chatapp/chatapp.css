@@ -41,11 +41,11 @@ ul {
 /* .usersmain{
  
 } */
-  #users{
+  #groups{
     background-color: blanchedalmond;
-   width: 500px;
-   margin-left: 500px;
-   text-align: center;
+   width: 100px;
+  margin-top: 20px;
+  float: left;
   } 
   
  ul li {
@@ -55,7 +55,11 @@ ul {
   }
   #chats{
     background-color: rgb(177, 217, 226);
-    width: 500px;
+    
     margin-top: 30px;
-    margin-left: 500px;
+   float: right;
+  }
+
+  .gro{
+    float: left;
   }
