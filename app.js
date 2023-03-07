@@ -8,6 +8,7 @@ const sequelize=require('./util/database');
 const userRoutes=require('./routes/user');
 const messageRoutes=require('./routes/message');
 const groupRoutes=require('./routes/group');
+const adminRoutes=require('./routes/admin');
 
 const User=require('./models/user');
 const Message=require('./models/message');
@@ -25,6 +26,7 @@ app.use(cors({
 
 app.use(bodyParser.json({ extended: true }));
 
+app.use('/admin',adminRoutes);
 app.use('/user',userRoutes);
 app.use('/message',messageRoutes);
 app.use('/group',groupRoutes);

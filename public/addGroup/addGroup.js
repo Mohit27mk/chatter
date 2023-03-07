@@ -11,7 +11,13 @@ groupname,users
     }
     const token=localStorage.getItem('token');
     axios.post("http://localhost:3000/group/create-group",myobj,{ headers: {"Authorization":token} }).then((res)=>{
-        window.location.href="../chatapp/chatapp.html";
+        // console.log(res);
+    axios.post("http://localhost:3000/admin/make-admin",{groupId:res.data.group.id},{ headers: {"Authorization":token} }).then((response)=>{
+
+    }).catch((err)=>{
+ console.log(err);
+    })
+    window.location.href="../chatapp/chatapp.html";
     }).catch((err)=>{
         console.log(err);
     })

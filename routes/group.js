@@ -7,5 +7,6 @@ const userauthentication=require('../middleware/auth')
 router.post('/create-group',userauthentication.authenticate,groupController.createGroup);
 router.get('/get-groups',userauthentication.authenticate,groupController.getGroups);
 
+router.post('/removeUserFromGroup',userauthentication.authenticate,groupController.removeUserFromGroup);
 
 module.exports = router;

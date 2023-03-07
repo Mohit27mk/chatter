@@ -7,7 +7,7 @@ exports.createGroup=async(req,res,next)=>{
     const users=req.body.users;
     const groupname=req.body.groupname;
     console.log(req.user.dataValues.id)
-    console.log(users)
+    // console.log(users)
     const group=await Group.create({name:groupname});
      await group.addUser(req.user.dataValues.id,{through: 'UserGroup'});
      for(let i=0;i<users.length;i++){
@@ -28,5 +28,20 @@ exports.getGroups=async(req,res,next)=>{
     }
       catch(err){
         console.log(err);
+        res.status(400);
       }
+}
+
+exports.removeUserFromGroup=async(req,res,next)=>{
+try{
+  const groupId=req.body.groupId;
+  const userId=req.query.userId;
+  const group = await Group.findByPk(groupId);
+  const user = await User.findByPk(userId);
+  await group.removeUser(user);
+  res.status(200).json({message:"deleted"});
+}catch(err){
+  console.log(err);
+  res.status(400);
+}
 }

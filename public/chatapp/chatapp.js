@@ -57,55 +57,61 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
 
     
-       setInterval(async()=>{
-        try{
+    //    setInterval(async()=>{
+    //     try{
 
-            const chats = document.querySelector('#chats');
-            const token=localStorage.getItem('token');
-            const groupId=localStorage.getItem('groupId');
+    //         const chats = document.querySelector('#chats');
+    //         const token=localStorage.getItem('token');
+    //         const groupId=localStorage.getItem('groupId');
             
-            let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
-            let lastId;
+    //         let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
+    //         let lastId;
             
-            if (localMsg.length == 0) {
+    //         if (localMsg.length == 0) {
               
-              lastId = 0;
-            }
-            if (localMsg.length > 0) {
-                for(let i=localMsg.length - 1;i>=0;i--){
-                    if(localMsg[i].groupId==groupId){
-                      lastId=localMsg[i].id;
-                      break;
-                    }
-                  }
+    //           lastId = 0;
+    //         }
+    //         if (localMsg.length > 0) {
+    //             for(let i=localMsg.length - 1;i>=0;i--){
+    //                 if(localMsg[i].groupId==groupId){
+    //                   lastId=localMsg[i].id;
+    //                   break;
+    //                 }
+    //               }
                 
-              }
-              if(!lastId){
-                lastId=0;
-              }
+    //           }
+    //           if(!lastId){
+    //             lastId=0;
+    //           }
        
-        const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
-        let  retrivedMsg =localMsg.concat(response.data.messages);
-    //  console.log(retrivedMsg)
-    if(response.data.messages.length!=0) 
-    {
-        // console.log(response.data.messages);
-    chats.innerHTML='';
-        if (retrivedMsg.length > 100) {
+    //     const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
+    //     let  retrivedMsg =localMsg.concat(response.data.messages);
+    // //  console.log(retrivedMsg)
+    // if(response.data.messages.length!=0) 
+    // {
+    //     // console.log(response.data.messages);
+    //     const groupName=localStorage.getItem('groupName');
+    // chats.innerHTML='';
+    // chats.innerHTML=groupName;
+    // var showparticipant=document.createElement('button');
+    //     showparticipant.className='showparticipant';
+    //     showparticipant.appendChild(document.createTextNode('Show participant'));
+    //     chats.appendChild(showparticipant);
+    //     if (retrivedMsg.length > 100) {
         
-        for (let i = 0; i < retrivedMsg.length - 100; i++)
-          retrivedMsg.shift();
-      }
-      localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
-    //   console.log(retrivedMsg);
-           for(let i=0;i<retrivedMsg.length;i++){
-            if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
-        }}
-    } 
-    catch(err){
-        console.log(err);
-    }
-       },1000) 
+    //     for (let i = 0; i < retrivedMsg.length - 100; i++)
+    //       retrivedMsg.shift();
+    //   }
+    //   localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
+    // //   console.log(retrivedMsg);
+    //        for(let i=0;i<retrivedMsg.length;i++){
+    //         if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
+    //     }}
+    // } 
+    // catch(err){
+    //     console.log(err);
+    // }
+    //    },1000) 
     
 
 
@@ -119,9 +125,46 @@ async function showGroups(obj){
     userList.appendChild(li);
     li.onclick=async()=>{
         localStorage.setItem('groupId',obj.group.id)
+        localStorage.setItem('groupName',obj.group.name)
         const chats = document.querySelector('#chats');
         chats.innerHTML=obj.group.name;
-        
+        var showparticipant=document.createElement('button');
+        showparticipant.className='showparticipant';
+        showparticipant.appendChild(document.createTextNode('Show participant'));
+        chats.appendChild(showparticipant);
+
+        showparticipant.onclick=async()=>{
+         
+    const token=localStorage.getItem('token');
+    const res=await axios.get(`http://localhost:3000/user/get-users?groupId=${obj.group.id}`,{ headers: {"Authorization":token} });
+    // console.log(res.data.users);
+    const participants = document.querySelector('#participants');
+    participants.style.display='initial';
+    participants.innerHTML="Participants";
+    var removeparticipant=document.createElement('button');
+    removeparticipant.className='removeparticipant';
+    removeparticipant.appendChild(document.createTextNode(''));
+    removeparticipant.innerHTML='&#x2717';
+    participants.appendChild(removeparticipant);
+    removeparticipant.onclick=async()=>{
+      participants.style.display='none';
+    }
+    const li = document.createElement('li');
+    li.appendChild(document.createTextNode(`You`));
+    participants.appendChild(li);
+    
+    const output=await axios.get(`http://localhost:3000/admin/check-admin/?groupId=${groupId}`,{ headers: {"Authorization":token} });
+    // console.log(output);
+    if(output.data){
+      var div=document.createElement('div');
+      div.className='admin';
+      div.appendChild(document.createTextNode('Group Admin'));
+      li.appendChild(div);
+    }
+    for(let i=0;i<res.data.users.length;i++){
+        showUsers(res.data.users[i].user);
+    }  
+        }
         let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
         let lastId;
         
@@ -161,6 +204,7 @@ async function showGroups(obj){
 }
 
 function showMessage(obj){
+
     const chats = document.querySelector('#chats');
     const li = document.createElement('li');
     const name=localStorage.getItem('name');
@@ -171,4 +215,66 @@ function showMessage(obj){
         li.appendChild(document.createTextNode(`${obj.name}: ${obj.message}`));
         chats.appendChild(li);
     } 
+}
+
+async function showUsers (obj){
+
+  const token=localStorage.getItem('token');
+  const groupId=localStorage.getItem('groupId');
+
+  const participants = document.querySelector('#participants');
+  const li = document.createElement('li');
+  li.appendChild(document.createTextNode(`${obj.name}`));
+  participants.appendChild(li);
+  // console.log(obj);
+  try{
+    const output=await axios.get(`http://localhost:3000/admin/check-admin/?groupId=${groupId}`,{ headers: {"Authorization":token} });
+    // console.log(output);
+    if(output.data){
+        
+      const res=await axios.get(`http://localhost:3000/admin/check-admin/?userId=${obj.id}&groupId=${groupId}`,{ headers: {"Authorization":token} });
+      if(res.data){
+        var div=document.createElement('div');
+        div.className='admin';
+        div.appendChild(document.createTextNode('Group Admin'));
+        li.appendChild(div);
+        var removeUser=document.createElement('button');
+        removeUser.className='removeUser';
+        removeUser.appendChild(document.createTextNode('Remove'));
+        li.appendChild(removeUser);
+
+        removeUser.onclick=async()=>{
+          await axios.post(`http://localhost:3000/group/removeUserFromGroup?userId=${obj.id}`,{groupId:groupId},{ headers: {"Authorization":token} });
+          await axios.post(`http://localhost:3000/admin/removeAdmin?userId=${obj.id}`,{groupId:groupId},{ headers: {"Authorization":token} })
+        }
+
+      }else{
+
+        var removeUser=document.createElement('button');
+        removeUser.className='removeUser';
+        removeUser.appendChild(document.createTextNode('Remove'));
+        li.appendChild(removeUser);
+        
+        removeUser.onclick=async()=>{
+          await axios.post(`http://localhost:3000/group/removeUserFromGroup?userId=${obj.id}`,{groupId:groupId},{ headers: {"Authorization":token} });          
+        }
+
+        var makeAdmin=document.createElement('button');
+        makeAdmin.className='makeAdmin';
+        makeAdmin.appendChild(document.createTextNode('Make Group Admin'));
+        li.appendChild(makeAdmin);
+        
+        makeAdmin.onclick=async()=>{
+         await axios.post(`http://localhost:3000/admin/make-admin?userId=${obj.id}`,{groupId:groupId},{ headers: {"Authorization":token} })
+        }
+
+          
+         
+      }  
+      
+    }
+  }
+  catch(err){
+    console.log(err);
+  }
 }

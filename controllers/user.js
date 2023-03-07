@@ -1,4 +1,6 @@
 const User=require('../models/user');
+const UserGroup=require('../models/usergroup');
+const Group=require('../models/group');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 
@@ -76,11 +78,23 @@ exports.postLoginUser=async(req,res,next)=>{
 
 exports.getUsers=async(req,res,next)=>{
    try{
-    let users = await User.findAll();
-     users=users.filter((user)=>user.id!=req.user.id);
+    let users;
+    if(req.query.groupId){
+         users = await UserGroup.findAll({ 
+            where: { groupId:req.query.groupId}, 
+            include: [{ model: User }]
+          });
+        //   console.log(users[0].dataValues.userId);
+          users=users.filter((user)=>user.dataValues.userId!=req.user.id);
+    }else{
+         users = await User.findAll();
+         users=users.filter((user)=>user.id!=req.user.id);
+    }
+     
     res.status(200).json({users});
    }catch(err){
     console.log(err);
    }
 
 }
+
