@@ -16,6 +16,8 @@ const User=require('./models/user');
 const Message=require('./models/message');
 const Group=require('./models/group');
 const UserGroup=require('./models/usergroup');
+const ArchieveMessage=require('../models/archievedmessage');
+
 
 const cors=require("cors");
 const app=express();
@@ -48,12 +50,16 @@ app.use('/user',userRoutes);
 app.use('/message',messageRoutes);
 app.use('/group',groupRoutes);
 
+User.hasMany(ArchieveMessage);
+ArchieveMessage.belongsTo(User);
 User.hasMany(Message);
 Message.belongsTo(User);
 User.belongsToMany(Group,{through:UserGroup})
 Group.belongsToMany(User,{through:UserGroup})
 Group.hasMany(Message);
 Message.belongsTo(Group);
+Group.hasMany(ArchieveMessage);
+ArchieveMessage.belongsTo(Group);
 
 UserGroup.belongsTo(User);
 UserGroup.belongsTo(Group);

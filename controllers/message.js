@@ -1,6 +1,10 @@
 const Message=require('../models/message');
+const ArchieveMessage=require('../models/archievedmessage');
 const User=require('../models/user');
 const { Op } = require("sequelize");
+const cron = require('node-cron');
+
+cron.schedule('0 0 * * *', moveOldMessages);
 
 exports.postAddMessage=async(req,res,next)=>{
     try{
@@ -50,3 +54,37 @@ exports.postAddFile=async(req,res,next)=>{
     res.status(500).json({fileURL:'',success:false,err:err});
     } 
 }
+
+async function moveOldMessages() {
+    // Define the cutoff date for old messages
+    const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 1 day ago
+  
+    // Retrieve the old messages from the Chat table
+    const oldMessages = await Message.findAll({
+      where: {
+        createdAt: {
+          [Op.lte]: cutoffDate,
+        },
+      },
+    });
+  
+    // Insert the old messages into the ArchivedChat table
+    for (const message of oldMessages) {
+      await ArchieveMessage.create({
+        name: message.name,
+        userId: message.userId,
+        groupId: message.groupId,
+        createdAt: message.createdAt,
+      });
+    }
+  
+    // Delete the old messages from the Chat table
+    await Message.destroy({
+      where: {
+        createdAt: {
+          [Op.lte]: cutoffDate,
+        },
+      },
+    });
+  }
+  
