@@ -13,15 +13,18 @@
     <h1>ChatApp</h1>
    </div>
    </div>
-   <form action="" id="myform" class="botto">
-    <div class="inp" >
-        <input type="text" id="message" placeholder="Type a message" name="message">
+   
+    <div class="botto" >
+        <form action="" id="myform" class="inp"></form>
+        <input type="text" id="message" placeholder="Type a message" name="message" required>
         <button type="submit">Send</button>
-        <input type="file" id="file">
-        <button id="filebtn" type="button">Up</button>
-       
+    </form>
+    <form id="myForm">
+        <input type="file" name="myFile" id="myfile">
+        <button type="submit">Upload</button>
+      </form>
        </div>
-   </form>
+ 
   <div class="gro">
    <form action="../addGroup/addGroup.html" id="add-group">
 <button type="submit">New group</button>

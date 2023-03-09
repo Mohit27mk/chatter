@@ -36,3 +36,17 @@ exports.getMessages=async(req,res,next)=>{
     }
 }
 
+exports.postAddFile=async(req,res,next)=>{
+    try{
+        
+        const fileData=req.file.buffer;
+        const filename=req.file.originalname;
+        
+        const fileURL=await S3services.uploadToS3(fileData,filename);
+        
+        res.status(200).json({fileURL,success:true});
+    }catch(err){
+        console.log(err);
+    res.status(500).json({fileURL:'',success:false,err:err});
+    } 
+}

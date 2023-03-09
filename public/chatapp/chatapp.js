@@ -37,45 +37,79 @@ function onSubmit(e){
     messageInput.value='';
 }
 
-const myButton = document.getElementById("filebtn");
-const myInput = document.getElementById("file");
+// const myButton = document.getElementById("filebtn");
+// const myInput = document.getElementById("file");
 
 // Add an event listener to the button element
-myButton.addEventListener("click", function() {
-  // Retrieve the value of the input field
-  const myImage = document.createElement("img");
-  const inputValue = myInput.value;
-  const chats = document.querySelector('#chats');
-
-const selectedFile = myInput.files[0];
-
-const fileobj={
-  selectedFile
-}
-
-const groupId=localStorage.getItem('groupId');
-axios.post(`http://localhost:3000/message/add-file/${groupId}`,fileobj,{ headers: {"Authorization":token} }).then((res)=>{
-
-}).catch(err=>{
-  console.log(err);
-})
+// myButton.addEventListener("click", function() {
+//   // Retrieve the value of the input field
+//   const myImage = document.createElement("img");
+//   const inputValue = myInput.value;
+//   const chats = document.querySelector('#chats');
+//   const token=localStorage.getItem('token');
 
 
-// // Create a FileReader object to read the file
-// const reader = new FileReader();
 
-// // // Set the image source when the file is loaded
-// // reader.onload = function(event) {
-// //   myImage.src = event.target.result;
-// // };
+// const selectedFile = myInput.files[0];
 
-// // chats.appendChild(myImage);
+// // const formData = new FormData();
+// // // formData.append('file', fileInput.files[0]);
 
-// // // Read the file as a data URL
-// // reader.readAsDataURL(selectedFile);
+// const trya="try"; 
+// console.log(selectedFile);
+// const fileobj={
+//   myFile:selectedFile,trya:trya
+// }
+
+// const groupId=localStorage.getItem('groupId');
+// axios.post(`http://localhost:3000/message/add-file/${groupId}`,fileobj,{ headers: {"Authorization":token} }).then((res)=>{
+
+// }).catch(err=>{
+//   console.log(err);
+// })
 
 
+// // // Create a FileReader object to read the file
+// // const reader = new FileReader();
+
+// // // // Set the image source when the file is loaded
+// // // reader.onload = function(event) {
+// // //   myImage.src = event.target.result;
+// // // };
+
+// // // chats.appendChild(myImage);
+
+// // // // Read the file as a data URL
+// // // reader.readAsDataURL(selectedFile);
+
+
+// });
+
+const form = document.getElementById('myForm');
+
+form.addEventListener('submit', (event) => {
+  
+  event.preventDefault(); // prevent default form submission
+  const formData = new FormData(form);
+  uploadFile(formData);
+
+  form.reset();
+   
 });
+
+async function uploadFile(formData) {
+  try {
+    
+    const token=localStorage.getItem('token');
+    const groupId=localStorage.getItem('groupId');
+
+    const response = await axios.post(`http://localhost:3000/message/add-file/${groupId}`,formData,{ headers: {"Authorization":token} });
+    const result = await response.json();
+    console.log(result); // log response from backend
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 window.addEventListener('DOMContentLoaded',async()=>{
     try{  
