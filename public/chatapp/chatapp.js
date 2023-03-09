@@ -1,8 +1,8 @@
+// import {io} from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+const socket = io('http://localhost:8000');
 
 
-const users=document.querySelector("#users");
 const messageInput=document.getElementById('message');
-const messageArray=[];
 const myForm=document.querySelector('#myform');
 
 myForm.addEventListener('submit', onSubmit);
@@ -29,13 +29,53 @@ function onSubmit(e){
     axios.post(`http://localhost:3000/message/add-message/${groupId}`,myobj,{ headers: {"Authorization":token} })
     .then((res)=>{
        console.log(res.data.data);
-       
+       socket.emit('send-message', groupId);
     }).catch((err)=>{
      console.log(err);
     })
     
     messageInput.value='';
 }
+
+const myButton = document.getElementById("filebtn");
+const myInput = document.getElementById("file");
+
+// Add an event listener to the button element
+myButton.addEventListener("click", function() {
+  // Retrieve the value of the input field
+  const myImage = document.createElement("img");
+  const inputValue = myInput.value;
+  const chats = document.querySelector('#chats');
+
+const selectedFile = myInput.files[0];
+
+const fileobj={
+  selectedFile
+}
+
+const groupId=localStorage.getItem('groupId');
+axios.post(`http://localhost:3000/message/add-file/${groupId}`,fileobj,{ headers: {"Authorization":token} }).then((res)=>{
+
+}).catch(err=>{
+  console.log(err);
+})
+
+
+// // Create a FileReader object to read the file
+// const reader = new FileReader();
+
+// // // Set the image source when the file is loaded
+// // reader.onload = function(event) {
+// //   myImage.src = event.target.result;
+// // };
+
+// // chats.appendChild(myImage);
+
+// // // Read the file as a data URL
+// // reader.readAsDataURL(selectedFile);
+
+
+});
 
 window.addEventListener('DOMContentLoaded',async()=>{
     try{  
@@ -55,63 +95,70 @@ window.addEventListener('DOMContentLoaded',async()=>{
     }
 })
 
+socket.on('receive-message', async (group) => {
+  const groupId=localStorage.getItem('groupId');
+  if(group == groupId){
+      
+    fetchNewMessage();
+  }
+})
 
     
-    //    setInterval(async()=>{
-    //     try{
+     async function fetchNewMessage(){
+        try{
 
-    //         const chats = document.querySelector('#chats');
-    //         const token=localStorage.getItem('token');
-    //         const groupId=localStorage.getItem('groupId');
+            const chats = document.querySelector('#chats');
+            const token=localStorage.getItem('token');
+            const groupId=localStorage.getItem('groupId');
             
-    //         let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
-    //         let lastId;
+            let localMsg = JSON.parse(localStorage.getItem("localMsg"))||[];
+            let lastId;
             
-    //         if (localMsg.length == 0) {
+            if (localMsg.length == 0) {
               
-    //           lastId = 0;
-    //         }
-    //         if (localMsg.length > 0) {
-    //             for(let i=localMsg.length - 1;i>=0;i--){
-    //                 if(localMsg[i].groupId==groupId){
-    //                   lastId=localMsg[i].id;
-    //                   break;
-    //                 }
-    //               }
+              lastId = 0;
+            }
+            if (localMsg.length > 0) {
+                for(let i=localMsg.length - 1;i>=0;i--){
+                    if(localMsg[i].groupId==groupId){
+                      lastId=localMsg[i].id;
+                      break;
+                    }
+                  }
                 
-    //           }
-    //           if(!lastId){
-    //             lastId=0;
-    //           }
+              }
+              if(!lastId){
+                lastId=0;
+              }
        
-    //     const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
-    //     let  retrivedMsg =localMsg.concat(response.data.messages);
-    // //  console.log(retrivedMsg)
-    // if(response.data.messages.length!=0) 
-    // {
-    //     // console.log(response.data.messages);
-    //     const groupName=localStorage.getItem('groupName');
-    // chats.innerHTML='';
-    // chats.innerHTML=groupName;
-    // var showparticipant=document.createElement('button');
-    //     showparticipant.className='showparticipant';
-    //     showparticipant.appendChild(document.createTextNode('Show participant'));
-    //     chats.appendChild(showparticipant);
-    //     if (retrivedMsg.length > 100) {
+        const response=await axios.get(`http://localhost:3000/message/get-messages/${groupId}?lastId=${lastId}`,{ headers: {"Authorization":token} });
+        let  retrivedMsg =localMsg.concat(response.data.messages);
+    //  console.log(retrivedMsg)
+    if(response.data.messages.length!=0) 
+    {
+        // console.log(response.data.messages);
+        const groupName=localStorage.getItem('groupName');
+    chats.innerHTML='';
+    chats.innerHTML=groupName;
+    var showparticipant=document.createElement('button');
+        showparticipant.className='showparticipant';
+        showparticipant.appendChild(document.createTextNode('Show participant'));
+        chats.appendChild(showparticipant);
+        if (retrivedMsg.length > 100) {
         
-    //     for (let i = 0; i < retrivedMsg.length - 100; i++)
-    //       retrivedMsg.shift();
-    //   }
-    //   localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
-    // //   console.log(retrivedMsg);
-    //        for(let i=0;i<retrivedMsg.length;i++){
-    //         if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
-    //     }}
-    // } 
-    // catch(err){
-    //     console.log(err);
-    // }
-    //    },1000) 
+        for (let i = 0; i < retrivedMsg.length - 100; i++)
+          retrivedMsg.shift();
+      }
+      localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
+    //   console.log(retrivedMsg);
+           for(let i=0;i<retrivedMsg.length;i++){
+            if(retrivedMsg[i].groupId==groupId){showMessage(retrivedMsg[i]);}
+        }}
+    } 
+    catch(err){
+        console.log(err);
+    }
+       } 
     
 
 

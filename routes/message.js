@@ -8,6 +8,8 @@ const userauthentication=require('../middleware/auth')
 
 router.post('/add-message/:groupId',userauthentication.authenticate,messageController.postAddMessage);
 
+// router.post('/add-file/:groupId',userauthentication.authenticate,messageController.postAddFile);
+
 router.get('/get-messages/:groupId',userauthentication.authenticate,messageController.getMessages);
 
 

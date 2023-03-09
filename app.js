@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 
 require('dotenv').config();
 
+
+
 const sequelize=require('./util/database');
 
 const userRoutes=require('./routes/user');
@@ -16,13 +18,28 @@ const Group=require('./models/group');
 const UserGroup=require('./models/usergroup');
 
 const cors=require("cors");
-const { request } = require('express');
 const app=express();
 
+
+// ["http://127.0.0.1:5501"," http://127.0.0.1:5501/socket.io"]
 app.use(cors({
-    origin:"http://127.0.0.1:5501",
+    origin:'*',
     credentials:true,
 }));
+
+// const server = require('http').createServer(app)
+const io = require('socket.io')(8000,{
+    cors: {
+        origin: '*',
+      }
+});
+io.on('connection', socket => {
+    socket.on('send-message', room => {
+        io.emit('receive-message', room);
+    });
+})
+
+
 
 app.use(bodyParser.json({ extended: true }));
 

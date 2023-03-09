@@ -17,6 +17,9 @@
     <div class="inp" >
         <input type="text" id="message" placeholder="Type a message" name="message">
         <button type="submit">Send</button>
+        <input type="file" id="file">
+        <button id="filebtn" type="button">Up</button>
+       
        </div>
    </form>
   <div class="gro">
@@ -31,8 +34,9 @@
       <ul id="participants"></ul>
            <ul id="chats"></ul>
    </div>
-
-    <script src="./chatapp.js"></script>
+   <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+    <script type="module" src="./chatapp.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
 </body>
 </html>
